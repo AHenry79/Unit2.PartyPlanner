@@ -1,65 +1,74 @@
 const wrapper = document.getElementById("wrapper");
-const API_URL = `https://fsa-crud-2aa9294fe819.herokuapp.com/api/2404-FTB-ET-WEB-FT/events`;
-const state = {
-  parties: [],
-};
-let list = [];
-// to pull parties from API
-async function getParties() {
-  try {
-    const response = await fetch(API_URL);
-    const json = await response.json();
-    state.parties = json.data;
-    list.push(state.parties);
-  } catch (error) {
-    console.error(error);
-  }
-}
-getParties();
 
-function addParty(info) {
-  const pt = { name: "", date: "", location: "" };
-  pt.name = info.name;
-  pt.date = info.date;
-  pt.location = info.location;
-  state.parties.push(pt);
+async function fetchEvents() {
+  const response = await fetch(
+    "https://fsa-crud-2aa9294fe819.herokuapp.com/api/2404-FTB-ET-WEB-FT/events"
+  );
+  return await response.json();
 }
 
-document.getElementById("submit").addEventListener("click", () => {
-  const namVal = document.getElementById("nameInput").value;
-  const dateVal = document.getElementById("dateInput").value;
-  const locVal = document.getElementById("locInput").value;
-  addParty({ name: namVal, date: dateVal, location: locVal });
+fetchEvents().then((response) => {
+  response.data.forEach((i) => {
+    createEventCard(i);
+  });
 });
 
-const ele = document.getElementById("list");
-const tableNameEle = document.getElementById("ndl");
-tableNameEle.innerHTML = "<h2>Name:</h2><h2>Date:</h2><h2>Location:</h2>";
-tableNameEle.style.display = "flex";
-tableNameEle.style.justifyContent = "space-around";
-ele.appendChild(tableNameEle);
-wrapper.appendChild(ele);
+function createEventCard(i) {
+  const ele = document.createElement("div");
+  const names = document.createElement("h1");
+  const descriptions = document.createElement("h4");
+  const dateTimes = document.createElement("h4");
+  const locations = document.createElement("h4");
+  const buttonEle = document.createElement("button");
+  buttonEle.textContent = "Delete event";
+  buttonEle.id = "deleteButton";
+  wrapper.appendChild(ele);
+  ele.appendChild(names);
+  ele.appendChild(descriptions);
+  ele.appendChild(dateTimes);
+  ele.appendChild(locations);
+  ele.appendChild(buttonEle);
+  buttonEle.addEventListener("click", () => {
+    deleteEle(i.id);
+    ele.remove();
+  });
+  names.innerHTML = i.name;
+  descriptions.innerHTML = i.description;
+  dateTimes.innerHTML = i.date;
+  locations.innerHTML = i.location;
+}
 
-const partyListName = document.createElement("div");
-partyListName.innerHTML = "<h3>Mary</h3><h3>John</h3><h3>Susan</h3>";
-partyListName.style.display = "flex";
-partyListName.style.flexDirection = "column";
-partyListName.style.marginLeft = "200px";
-ele.appendChild(partyListName);
+async function deleteEle(id) {
+  await fetch(
+    `https://fsa-crud-2aa9294fe819.herokuapp.com/api/2404-FTB-ET-WEB-FT/events/${id}`,
+    {
+      method: "DELETE",
+    }
+  );
+}
+async function addEvents() {
+  document.getElementById("addButton").addEventListener("click", () => {
+    const names = document.getElementById("name").value;
+    const descriptions = document.getElementById("description").value;
+    const dateTimes = document.getElementById("date-time").value;
+    const locations = document.getElementById("location").value;
 
-const partyListDate = document.createElement("div");
-partyListDate.innerHTML = "<h3>03/24</h3><h3>07/28</h3><h3>12/05</h3>";
-partyListDate.style.display = "flex";
-partyListDate.style.flexDirection = "column";
-partyListDate.style.marginLeft = "640px";
-partyListDate.style.marginTop = "-180px";
-ele.appendChild(partyListDate);
+    async function addParty() {
+      const response = await fetch(
+        "https://fsa-crud-2aa9294fe819.herokuapp.com/api/2404-FTB-ET-WEB-FT/events",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            name: names,
+            description: descriptions,
+            date: dateTimes,
+            location: locations,
+          }),
+        }
+      );
 
-const partyListLoc = document.createElement("div");
-partyListLoc.innerHTML = "<h3>London</h3><h3>Paris</h3><h3>Tokyo</h3>";
-partyListLoc.style.display = "flex";
-partyListLoc.style.flexDirection = "column";
-partyListLoc.style.marginRight = "200px";
-partyListLoc.style.marginTop = "-180px";
-partyListLoc.style.float = "right";
-ele.appendChild(partyListLoc);
+      return response;
+    }
+    addParty();
+  });
+}

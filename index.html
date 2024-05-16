@@ -7,18 +7,35 @@
   </head>
   <body>
     <div id="wrapper">
-      <section>
-        <h1>Add Party</h1>
-        <input type="text" id="nameInput" placeholder="Type name..." />
-        <input type="text" id="dateInput" placeholder="Type date..." />
-        <input type="text" id="locInput" placeholder="Type location..." />
-        <button id="submit">Submit</button>
-      </section>
-      <section>
-        <div id="list">
-          <div id="ndl"></div>
-        </div>
-      </section>
+      <h1>Party Planner</h1>
+      <div>
+        <form id="addEvent">
+          <label>
+            <input type="text" placeholder="Your name" id="name" />
+          </label>
+          <label>
+            <input
+              type="text"
+              name="description"
+              placeholder="Enter a description"
+              id="description"
+            />
+          </label>
+          <label>
+            <input type="datetime-local" name="date-time" id="date-time" />
+          </label>
+          <label>
+            <input
+              type="text"
+              name="location"
+              placeholder="Enter a location"
+              id="location"
+            />
+          </label>
+          <button id="addButton">Add party</button>
+        </form>
+      </div>
+      <div id="results"></div>
     </div>
     <script src="app.js"></script>
   </body>
